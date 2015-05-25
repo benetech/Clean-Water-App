@@ -1,0 +1,50 @@
+<html>
+
+{% load bootstrap3 %}
+{% bootstrap_css %} 
+{% bootstrap_javascript %}
+
+<div>
+	<h1><center> Avina Clean Water Project <center></h1>
+</div>
+
+<br>
+
+<style>
+img {
+	position: fixed;
+	top:5px;
+	left:5px;
+}
+
+</style>
+
+<table class ="table table-bordered">
+	<thead>
+		<tr>
+			<th scope ="col">Survey Name</th>
+			<th scope ="col"># of Submissions</th>
+			<th scope ="col">Submissions</th>
+			<th scope ="col">Last Submission</th>
+				
+		</tr>
+	</thead>
+	
+	<tbody>
+		{% for key, value in surveys.items %}
+		<tr>
+			<td>{{ key }}</a></td>
+			<td>{{ value.num_of_submissions }}</td>
+			<td>
+				{% if value.num_of_submissions > 0 %}
+				<a href="/surveydata/{{ value.login_name }}/{{ value.formid }}/{{ key }}">View Submissions</a>
+				{% endif %}
+			</td>
+			<td>{{ value.last_submission_time }}</td>
+		</tr>
+		{% endfor %}
+		
+	</tbody>
+</table>
+
+</html>

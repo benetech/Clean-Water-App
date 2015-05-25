@@ -1,0 +1,49 @@
+<html>
+
+{% load bootstrap3 %}
+{% bootstrap_css %} 
+{% bootstrap_javascript %}
+
+
+<style>
+img {
+	position:absolute;
+	bottom:5px;
+	right:5px;
+}
+h3 {
+	padding-left:5px;
+}
+
+</style>
+
+<div>
+	<h3> >> {{ title }} </h3>
+</div>
+
+<table class ="table table-bordered">
+	<thead>
+		<tr>
+			<th scope ="col">OCSA Name</th>
+			<th scope ="col">Submission Time</th>
+			<th scope ="col">Dashboard</th>
+			<th scope ="col">Photos</th>
+				
+		</tr>
+	</thead>
+	
+	<tbody>
+		{% for key, value in surveys.items %}
+		<tr>
+			<td>{{ key }}</a></td>
+			<td>{{ value.submission_time }}</a></td>
+			<td><a href="{{ url }}xlsDownload/{{ value.submission_id }}">Download</a></td>
+			<td><a href="{{ url }}photosDownload/{{ value.submission_id }}">Download</a></td>
+		</tr>
+		{% endfor %}
+		
+	</tbody>
+</table>
+
+
+</html>
