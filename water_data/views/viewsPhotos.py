@@ -12,23 +12,24 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
+FHLogin = "adamb"
+FHPass = "cleanwaterpass"
+FHServer = "http://54.86.146.199"
+headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
+
 def photosDownload(request, survey_id, login_name, survey_title, submission_id): 
     
     if login_name == "adamb":
-           FHLogin = "adamb"
-           FHPass = "cleanwaterpass"
-           FHServer = "http://54.86.146.199"
-           headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
-    
-    
-    #JSON requests from FormHub API
-    urlAnswers = FHServer + "/api/v1/data/" + FHLogin + '/' + survey_id
-    urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + '/' + survey_id + '/' + 'form.json'
+        #JSON requests from FormHub API
+        urlAnswers = FHServer + "/api/v1/data/" + FHLogin + '/' + survey_id
+        urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + '/' + survey_id + '/' + 'form.json'
 
-    result = requests.get(urlAnswers, headers=headers)
-    dataAnswers = json.loads(result.content)
-    result = requests.get(urlQuestions, headers=headers)
-    dataQuestions = json.loads(result.content)
+        result = requests.get(urlAnswers, headers=headers)
+        dataAnswers = json.loads(result.content)
+        result = requests.get(urlQuestions, headers=headers)
+        dataQuestions = json.loads(result.content)
+    else: 
+        print "hello world"
 
     #fill Question dict with questions
     #communication_question_1, {question:“question”, answer:“answer”}
@@ -151,7 +152,7 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
             for x in range (1, photoGroupSize+1):
                 imageData = questionDict.get('photo_question_' + str(x))  
                 if(imageData and imageData['answer'] != 'n/a'):        
-                    url = 'http://54.86.146.199/attachment/original?media_file=' + FHLogin + '/attachments/' + imageData['answer']
+                    url = FHServer + '/attachment/original?media_file=' + FHLogin + '/attachments/' + imageData['answer']
                     unzippedImages = BytesIO(urlopen(url).read())
                     unzippedImages.seek(0)
                     zipf.writestr(imageData['question'] + '.jpg', unzippedImages.getvalue())
@@ -165,6 +166,6 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
             #     f.write(zipdata.getvalue())
 
             response = HttpResponse(zipdata.read(), content_type='application/x-zip')
-            response['Content-Disposition'] = 'attachment; filename='+ OCSA_name + ' Photos.zip'
+            response['Content-Disposition'] = 'attachment; filename='+ OCSA_name + ' Foto.zip'
 
             return response

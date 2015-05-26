@@ -12,25 +12,26 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
+FHLogin = "adamb"
+FHPass = "cleanwaterpass"
+FHServer = "http://54.86.146.199"
+headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
+
 def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
     
     output = StringIO.StringIO()
     
     if login_name == "adamb":
-        FHLogin = "adamb"
-        FHPass = "cleanwaterpass"
-        FHServer = "http://54.86.146.199"
-        headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
-    
-    #JSON requests for survey questions/answers
-    urlAnswers = FHServer + "/api/v1/data/" + FHLogin + "/" + survey_id
-    urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + "/" + survey_id + "/" + "form.json"
+        #JSON requests for survey questions/answers
+        urlAnswers = FHServer + "/api/v1/data/" + FHLogin + "/" + survey_id
+        urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + "/" + survey_id + "/" + "form.json"
        
-    headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
-    result = requests.get(urlAnswers, headers=headers)
-    dataAnswers = json.loads(result.content)
-    result = requests.get(urlQuestions, headers=headers)
-    dataQuestions = json.loads(result.content)
+        result = requests.get(urlAnswers, headers=headers)
+        dataAnswers = json.loads(result.content)
+        result = requests.get(urlQuestions, headers=headers)
+        dataQuestions = json.loads(result.content)
+    else:
+        print "hello world"
     
     #extract survey questions, put them in dictionary
     #format: communication_question_1, {question:“question”, answer:“answer”}
@@ -318,7 +319,10 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
                 row += 1
 
             #Total line at bottom of this section
-            totalAverage = sum(groupScores)/totalPoints
+            if totalPoints != 0:
+                totalAverage = sum(groupScores)/totalPoints
+            else:
+                totalAverage = 0
 
             worksheetViz.write(row, col + 1, 'TOTAL', formatWhite)
             worksheetViz.write_formula(row, col + 2, '=SUM(C' + str(row - len(groupScores) + 1) + ':C' + str(row) + ')', formatWhite)
@@ -369,10 +373,5 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = 'attachment; filename=' + OCSA_name + '.xlsx'
 
-        #now add in code to process this survey ID
             return response
-
-        # response = HttpResponse(zipdata.read(), content_type='application/x-zip')
-        # response['Content-Disposition'] = 'attachment; filename=DataZip.zip'
-
-        #return response
+            
