@@ -6,14 +6,31 @@
 
 
 <style>
-img {
-	position:absolute;
-	bottom:5px;
-	right:5px;
-}
 h3 {
 	padding-left:10px;
 }
+
+
+.avina_img {
+	text-align:center;
+	position:absolute;
+	bottom:5px;
+	width:100%;
+}
+
+img {
+	width:156px;
+	height:73px;
+	position:relative;
+}
+
+table {
+	background-color:#E6EEF5;
+}
+
+
+</style>
+
 
 </style>
 
@@ -39,7 +56,8 @@ h3 {
 		<tr>
 			<td>{{ key }}</a></td>
 			<td>{{ value.submission_time }}</a></td>
-			<td><a href="{{ url }}xlsDownload/{{ value.submission_id }}">Download</a></td>
+			<td>
+				<a href="{{ url }}xlsDownload/{{ value.submission_id }}">Download</a></td>
 			{% if value.has_photos %}
 			<td><a href="{{ url }}photosDownload/{{ value.submission_id }}">Download</a></td>
 			{% endif %}
@@ -49,5 +67,6 @@ h3 {
 	</tbody>
 </table>
 
+<div class="avina_img"><img src = http://www.avina.net/esp/wp-content/uploads/2013/02/logo_avina.jpg></div>
 
 </html>

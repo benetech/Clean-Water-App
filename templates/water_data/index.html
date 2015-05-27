@@ -5,19 +5,33 @@
 {% bootstrap_javascript %}
 
 <div>
-	<h1><center> Avina Clean Water App <center></h1>
+	<h1><center> Avina Clean Water App Data <center></h1>
 </div>
 
 <br>
 
 <style>
+
+.avina_img {
+	text-align:center;
+	position:absolute;
+	bottom:5px;
+	width:100%;
+}
+
 img {
-	position: fixed;
-	top:5px;
-	left:5px;
+	width:156px;
+	height:73px;
+	position:relative;
+}
+
+table {
+	background-color:#E6EEF5;
 }
 
 </style>
+
+
 
 <table class ="table table-bordered">
 	<thead>
@@ -37,7 +51,7 @@ img {
 			<td>{{ value.num_of_submissions }}</td>
 			<td>
 				{% if value.num_of_submissions > 0 %}
-				<a href="/surveydata/{{ value.login_name }}/{{ value.formid }}/{{ key }}">View Submissions</a>
+					<a href="/surveydata/{{ value.login_name }}/{{ value.formid }}/{{ key }}">View Submissions</a>
 				{% endif %}
 			</td>
 			<td>{{ value.last_submission_time }}</td>
@@ -46,5 +60,7 @@ img {
 		
 	</tbody>
 </table>
+
+<div class="avina_img"><img src = http://www.avina.net/esp/wp-content/uploads/2013/02/logo_avina.jpg></div>
 
 </html>
