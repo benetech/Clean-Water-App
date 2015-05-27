@@ -132,13 +132,14 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
             row += 1
 
             #Photo Data
+            #In this case, allow user to determine label of image through answer to photo_question_x
             for x in range (1, photoGroupSize+1):
                 outputQuestion = questionDict.get('photo_question_' + str(x))
                 outputComment = questionDict.get('photo_comment_' + str(x))
 
                 if(outputQuestion):
                     worksheetPhotos.write(row, col, outputQuestion.get('question').split(' ')[0], formatWhite)
-                    worksheetPhotos.write(row, col + 1, outputQuestion.get('question'), formatWhite)
+                    worksheetPhotos.write(row, col + 1, outputQuestion.get('answer'), formatWhite)
                 if(outputComment):
                     worksheetPhotos.write(row, col + 2, outputComment.get('answer'), formatWhite)
 
@@ -150,12 +151,13 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
 
             #Get photo attachement file names and retrieve them via URL, then add to byte stream
             for x in range (1, photoGroupSize+1):
-                imageData = questionDict.get('photo_question_' + str(x))  
+                imageData = questionDict.get('photo_capture_' + str(x))  
+                questionInput = questionDict.get('photo_question_' + str(x))  
                 if(imageData and imageData['answer'] != 'n/a'):        
                     url = FHServer + '/attachment/original?media_file=' + FHLogin + '/attachments/' + imageData['answer']
                     unzippedImages = BytesIO(urlopen(url).read())
                     unzippedImages.seek(0)
-                    zipf.writestr(imageData['question'] + '.jpg', unzippedImages.getvalue())
+                    zipf.writestr(questionInput['answer'] + '.jpg', unzippedImages.getvalue())
 
 
             zipf.close()
