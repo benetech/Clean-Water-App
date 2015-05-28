@@ -12,14 +12,14 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
-FHLogin = "adamb"
+FHLogin = "cleanwater"
 FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
+headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
 def photosDownload(request, survey_id, login_name, survey_title, submission_id): 
     
-    if login_name == "adamb":
+    if login_name == FHLogin:
         #JSON requests from FormHub API
         urlAnswers = FHServer + "/api/v1/data/" + FHLogin + '/' + survey_id
         urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + '/' + survey_id + '/' + 'form.json'

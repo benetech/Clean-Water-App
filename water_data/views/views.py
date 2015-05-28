@@ -13,15 +13,15 @@ import datetime
 from urllib2 import urlopen
 
 #Constants
-FHLogin = "adamb"
+FHLogin = "cleanwater"
 FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token 16d24bfe6de3e4c2c35dd68f8dc4d45cb62c16f4'}
+headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
 # Index displays the data on the first page
 def index(request, login_name):
     
-    if login_name == "adamb":
+    if login_name == FHLogin:
         url = FHServer + "/api/v1/forms/" + FHLogin
         result = requests.get(url, headers=headers)
         surveyData = json.loads(result.content)
@@ -56,7 +56,7 @@ def index(request, login_name):
   
 def listSubmissions(request, survey_id, login_name, survey_title):  
     
-    if login_name == "adamb":        
+    if login_name == FHLogin:        
         url = FHServer + "/api/v1/data/" + FHLogin + "/" + survey_id
         full_url = request.build_absolute_uri(None)
         result = requests.get(url, headers=headers)
