@@ -13,7 +13,6 @@ import datetime
 from urllib2 import urlopen
 
 #Constants
-FHLogin = "cleanwater"
 FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
@@ -21,13 +20,9 @@ headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 # Index displays the data on the first page
 def index(request, login_name):
     
-    if login_name == FHLogin:
-        url = FHServer + "/api/v1/forms/" + FHLogin
-        result = requests.get(url, headers=headers)
-        surveyData = json.loads(result.content)
-    else:
-        print "hello world"
-        ##return some sort of error here 
+    url = FHServer + "/api/v1/forms/" + login_name
+    result = requests.get(url, headers=headers)
+    surveyData = json.loads(result.content)
     
     surveyDict = {}
     
@@ -45,24 +40,21 @@ def index(request, login_name):
                 d = datetime.datetime.strptime(lastSubmission, '%Y-%m-%dT%H:%M:%S.%fZ')
                 dataDict['last_submission_time'] = d.strftime('%b %d, %Y %H:%M')
             dataDict['num_of_submissions'] = surveyData[x]['num_of_submissions']
-            dataDict['login_name'] = FHLogin
+            dataDict['login_name'] = login_name
             
             surveyDict[surveyData[x]['title']] = dataDict
                      
-    context = {'surveys': surveyDict}    
+    context = {'surveys': surveyDict, 'FHServer': FHServer + '/' + login_name}    
     return render(request, 'water_data/index.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
     
   
 def listSubmissions(request, survey_id, login_name, survey_title):  
-    
-    if login_name == FHLogin:        
-        url = FHServer + "/api/v1/data/" + FHLogin + "/" + survey_id
-        full_url = request.build_absolute_uri(None)
-        result = requests.get(url, headers=headers)
-        surveyData = json.loads(result.content)
-    else:
-        print "hello world"
+           
+    url = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
+    full_url = request.build_absolute_uri(None)
+    result = requests.get(url, headers=headers)
+    surveyData = json.loads(result.content)
    
     surveyDict = {}
     

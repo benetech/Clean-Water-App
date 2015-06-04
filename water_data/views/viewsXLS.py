@@ -12,7 +12,6 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
-FHLogin = "cleanwater"
 FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
@@ -21,17 +20,13 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
     
     output = StringIO.StringIO()
     
-    if login_name == FHLogin:
-        #JSON requests for survey questions/answers
-        urlAnswers = FHServer + "/api/v1/data/" + FHLogin + "/" + survey_id
-        urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + "/" + survey_id + "/" + "form.json"
-       
-        result = requests.get(urlAnswers, headers=headers)
-        dataAnswers = json.loads(result.content)
-        result = requests.get(urlQuestions, headers=headers)
-        dataQuestions = json.loads(result.content)
-    else:
-        print "hello world"
+    urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
+    urlQuestions = FHServer + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+   
+    result = requests.get(urlAnswers, headers=headers)
+    dataAnswers = json.loads(result.content)
+    result = requests.get(urlQuestions, headers=headers)
+    dataQuestions = json.loads(result.content)
     
     #extract survey questions, put them in dictionary
     #format: communication_question_1, {question:“question”, answer:“answer”}
@@ -52,7 +47,6 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
     #------------------------------------------
 
     #start for loop here to iterate through responses
-    #at some point we need to clear the dictionary to re-up it
     for responseNum in range(0, len(dataAnswers)):
         if (str(dataAnswers[responseNum]['_id']) == str(submission_id)):
   
@@ -304,7 +298,7 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
                 if (groupFilledList[x]):    
                     worksheetViz.write(row, col + 3, score/total, formatPercentage)
 
-                    #inequality to deternine category based off percentage
+                    #inequality to determine category based off percentage
                     if (score/total) <= .30:
                         worksheetViz.merge_range('E' + str(row + 1) + ':H' + str(row + 1), 'NACIENTE', formatRed)
                     elif (score/total) > .30 and (score/total) <= .55:
@@ -346,7 +340,7 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             worksheetViz.set_row(row-1, 3)
             worksheetViz.merge_range('A' + str(row) + ':H' + str(row), " ", formatSpacer)
 
-            #VIZ SECTION 3 (CBar Chart)
+            #VIZ SECTION 3 (Bar Chart)
             #------------------------------
 
             #format submission time

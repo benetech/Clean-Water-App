@@ -12,24 +12,19 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
-FHLogin = "cleanwater"
 FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
 def photosDownload(request, survey_id, login_name, survey_title, submission_id): 
     
-    if login_name == FHLogin:
-        #JSON requests from FormHub API
-        urlAnswers = FHServer + "/api/v1/data/" + FHLogin + '/' + survey_id
-        urlQuestions = FHServer + "/api/v1/forms/" + FHLogin + '/' + survey_id + '/' + 'form.json'
+    urlAnswers = FHServer + "/api/v1/data/" + login_name + '/' + survey_id
+    urlQuestions = FHServer + "/api/v1/forms/" + login_name + '/' + survey_id + '/' + 'form.json'
 
-        result = requests.get(urlAnswers, headers=headers)
-        dataAnswers = json.loads(result.content)
-        result = requests.get(urlQuestions, headers=headers)
-        dataQuestions = json.loads(result.content)
-    else: 
-        print "hello world"
+    result = requests.get(urlAnswers, headers=headers)
+    dataAnswers = json.loads(result.content)
+    result = requests.get(urlQuestions, headers=headers)
+    dataQuestions = json.loads(result.content)
 
     #fill Question dict with questions
     #communication_question_1, {question:“question”, answer:“answer”}
@@ -154,7 +149,7 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
                 imageData = questionDict.get('photo_capture_' + str(x))  
                 questionInput = questionDict.get('photo_question_' + str(x))  
                 if(imageData and imageData['answer'] != 'n/a'):        
-                    url = FHServer + '/attachment/original?media_file=' + FHLogin + '/attachments/' + imageData['answer']
+                    url = FHServer + '/attachment/original?media_file=' + login_name + '/attachments/' + imageData['answer']
                     unzippedImages = BytesIO(urlopen(url).read())
                     unzippedImages.seek(0)
                     zipf.writestr(questionInput['answer'] + '.jpg', unzippedImages.getvalue())
@@ -162,10 +157,6 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
 
             zipf.close()
             zipdata.seek(0)
-
-            #Write out zip to disk, need to change this to serve via http via Django
-            # with open(OCSA_name + '.zip', 'w') as f:
-            #     f.write(zipdata.getvalue())
 
             response = HttpResponse(zipdata.read(), content_type='application/x-zip')
             response['Content-Disposition'] = 'attachment; filename='+ OCSA_name + ' Foto.zip'
