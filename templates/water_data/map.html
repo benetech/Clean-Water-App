@@ -80,7 +80,6 @@
 
         var surveyData = {{ surveysJs|safe }};
         loadMarkers(surveyData);
-
       }
     
       google.maps.event.addDomListener(window, 'load', initialize);
@@ -92,7 +91,7 @@
     <div id="lista">
       <h3> Submissions
       </h3>
-      <div style=" height: 80px;overflow-y: scroll;">
+      <div style=" height: 200px;overflow-y: scroll;">
         <ul id="lista_body">
         </ul>
       </div>
