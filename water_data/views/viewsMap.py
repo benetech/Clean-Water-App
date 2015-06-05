@@ -23,28 +23,18 @@ def mapMarkers(request, login_name):
     url = FHServer + "/api/v1/forms/" + login_name
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
-    
-    surveyDict = {}
+    geoDict = {}
     
     if surveyData:
-        for x in range(0, len(surveyData)):
-            dataDict = {}
-            dataDict['url'] = surveyData[x]['url']
-            dateCreated = surveyData[x]['date_created']
-            if(dateCreated):
-                d = datetime.datetime.strptime(dateCreated, '%Y-%m-%dT%H:%M:%S.%fZ')
-                dataDict['date_created'] = d.strftime('%b %d, %Y %H:%M')
-            dataDict['formid'] = surveyData[x]['formid']
-            lastSubmission = surveyData[x]['last_submission_time']
-            if(lastSubmission):
-                d = datetime.datetime.strptime(lastSubmission, '%Y-%m-%dT%H:%M:%S.%fZ')
-                dataDict['last_submission_time'] = d.strftime('%b %d, %Y %H:%M')
-            dataDict['num_of_submissions'] = surveyData[x]['num_of_submissions']
-            dataDict['login_name'] = login_name
-            
-            surveyDict[surveyData[x]['title']] = dataDict
+        for x in range(0, len(surveyData)):    
+            urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + str(surveyData[x]['formid'])
+            resultAnswers = requests.get(urlAnswers, headers=headers)
+            surveyDataAnswers = json.loads(resultAnswers.content)
+            for y in range(0, len(surveyDataAnswers)):
+                geoDict[surveyDataAnswers[y]['personalization_group/personalization_question_3']] = surveyDataAnswers[y]['_geolocation']
+
                      
-    context = {'surveys': surveyDict, 'FHServer': FHServer + '/' + login_name}    
+    context = {'geoDictionary': geoDict}    
     return render(request, 'water_data/map.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
       

@@ -9,6 +9,7 @@ import StringIO
 import xlsxwriter
 
 from datetime import datetime
+from collections import OrderedDict
 from urllib2 import urlopen
 from io import BytesIO
 
@@ -50,6 +51,12 @@ def index(request, login_name):
     #return HttpResponse("hello world", mimetype='application/json')
 
 
+def getEpochTime(dt):
+    epoch = datetime.utcfromtimestamp(0)
+    delta = dt - epoch
+    return delta.total_seconds()
+
+
 def listSubmissions(request, survey_id, login_name, survey_title):
     url = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
     full_url = request.build_absolute_uri(None)
@@ -62,10 +69,12 @@ def listSubmissions(request, survey_id, login_name, survey_title):
         dataDict = {}
         dataDict['has_photos'] = '_attachments' in item
         d = datetime.strptime(item['_submission_time'], '%Y-%m-%dT%H:%M:%S')
+        dataDict['epochTime'] = getEpochTime(d)
         dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M')
         dataDict['submission_id'] = item['_id']
         dataDict['ocsa_name'] = item['personalization_group/personalization_question_3']
         surveyDict[dataDict['submission_id']] = dataDict
 
-    context = {'surveys': surveyDict, 'title': survey_title, 'url' : full_url}
+    sortedSurveyDict = OrderedDict(sorted(surveyDict.items(), key=lambda t: t[1]['epochTime'], reverse=True))
+    context = {'surveys': sortedSurveyDict, 'title': survey_title, 'url' : full_url}
     return render(request, 'water_data/listSubmissions.html', context)
