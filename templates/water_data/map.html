@@ -9,7 +9,6 @@
     </script>
     <script type="text/javascript">
 
-
       function getIconForScore(score) {
         if (score == 1) {
           return 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
@@ -64,11 +63,12 @@
           google.maps.event.trigger(marker, "click");
         }.bind(null, marker));
       }
-      
+
+      var surveys = {{ surveysJs|safe }};
       var mapCanvas;
       var infoWnd;
       function initialize() {
- 
+      
         // Creates a map object.
         mapCanvas = new google.maps.Map(document.getElementById('map-canvas'));
         infoWnd = new google.maps.InfoWindow();
@@ -83,6 +83,18 @@
         ];
 
         loadMarkers(data);
+        
+        for (var key in surveys) {
+          var pos = surveys[key];
+          if (pos.length == 2 && pos[0] && pos[1]) {
+            var marker = new google.maps.Marker({
+              position: new google.maps.LatLng(parseFloat(pos[0]), parseFloat(pos[1])),
+              map: map,
+              icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+              title: key
+            });
+          }
+        }
       }
     
       google.maps.event.addDomListener(window, 'load', initialize);

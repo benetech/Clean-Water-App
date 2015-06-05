@@ -54,7 +54,7 @@ table {
 	<tbody>
 		{% for key, value in surveys.items %}
 		<tr>
-			<td>{{ key }}</a></td>
+			<td>{{ value.ocsa_name }}</a></td>
 			<td>{{ value.submission_time }}</a></td>
 			<td>
 				<a href="{{ url }}xlsDownload/{{ value.submission_id }}">Download</a></td>

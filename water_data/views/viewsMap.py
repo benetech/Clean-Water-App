@@ -1,6 +1,7 @@
 #_*_ coding: utf-8
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils import simplejson
 import sys
 import os
 import requests
@@ -24,27 +25,30 @@ def mapMarkers(request, login_name):
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
     
-    surveyDict = {}
+    geoDict = {}
+    personalDict = {}
     
     if surveyData:
-        for x in range(0, len(surveyData)):
-            dataDict = {}
-            dataDict['url'] = surveyData[x]['url']
-            dateCreated = surveyData[x]['date_created']
-            if(dateCreated):
-                d = datetime.datetime.strptime(dateCreated, '%Y-%m-%dT%H:%M:%S.%fZ')
-                dataDict['date_created'] = d.strftime('%b %d, %Y %H:%M')
-            dataDict['formid'] = surveyData[x]['formid']
-            lastSubmission = surveyData[x]['last_submission_time']
-            if(lastSubmission):
-                d = datetime.datetime.strptime(lastSubmission, '%Y-%m-%dT%H:%M:%S.%fZ')
-                dataDict['last_submission_time'] = d.strftime('%b %d, %Y %H:%M')
-            dataDict['num_of_submissions'] = surveyData[x]['num_of_submissions']
-            dataDict['login_name'] = login_name
+        for x in range(0, len(surveyData)):    
+            urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + str(surveyData[x]['formid'])
+            resultAnswers = requests.get(urlAnswers, headers=headers)
+            surveyDataAnswers = json.loads(resultAnswers.content)
             
-            surveyDict[surveyData[x]['title']] = dataDict
-                     
-    context = {'surveys': surveyDict, 'FHServer': FHServer + '/' + login_name}    
+            #add personalization and geo data into dictionary
+            for y in range(0, len(surveyDataAnswers)):
+                personalDict['geo'] = surveyDataAnswers[y]['_geolocation']
+                personalDict['q_1'] = surveyDataAnswers[y]['personalization_group/personalization_question_1']
+                personalDict['q_2'] = surveyDataAnswers[y]['personalization_group/personalization_question_2']
+                personalDict['q_3'] = surveyDataAnswers[y]['personalization_group/personalization_question_3']
+                personalDict['q_4'] = surveyDataAnswers[y]['personalization_group/personalization_question_4']
+                personalDict['q_5'] = surveyDataAnswers[y]['personalization_group/personalization_question_5']
+                personalDict['q_6'] = surveyDataAnswers[y]['personalization_group/personalization_question_6']
+                personalDict['q_7'] = surveyDataAnswers[y]['personalization_group/personalization_question_7']
+    
+                geoDict[surveyDataAnswers[y]['_id']] = personalDict
+    
+    js_data = simplejson.dumps(geoDict)                 
+    context = {'surveysJs': js_data, 'geoDictionary': geoDict}    
     return render(request, 'water_data/map.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
       
