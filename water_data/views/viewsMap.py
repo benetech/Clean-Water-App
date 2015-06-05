@@ -24,16 +24,28 @@ def mapMarkers(request, login_name):
     url = FHServer + "/api/v1/forms/" + login_name
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
+    
     geoDict = {}
+    personalDict = {}
     
     if surveyData:
         for x in range(0, len(surveyData)):    
             urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + str(surveyData[x]['formid'])
             resultAnswers = requests.get(urlAnswers, headers=headers)
             surveyDataAnswers = json.loads(resultAnswers.content)
+            
+            #add personalization and geo data into dictionary
             for y in range(0, len(surveyDataAnswers)):
-                geoDict[surveyDataAnswers[y]['personalization_group/personalization_question_3']] = surveyDataAnswers[y]['_geolocation']
-
+                personalDict['geo'] = surveyDataAnswers[y]['_geolocation']
+                personalDict['q_1'] = surveyDataAnswers[y]['personalization_group/personalization_question_1']
+                personalDict['q_2'] = surveyDataAnswers[y]['personalization_group/personalization_question_2']
+                personalDict['q_3'] = surveyDataAnswers[y]['personalization_group/personalization_question_3']
+                personalDict['q_4'] = surveyDataAnswers[y]['personalization_group/personalization_question_4']
+                personalDict['q_5'] = surveyDataAnswers[y]['personalization_group/personalization_question_5']
+                personalDict['q_6'] = surveyDataAnswers[y]['personalization_group/personalization_question_6']
+                personalDict['q_7'] = surveyDataAnswers[y]['personalization_group/personalization_question_7']
+    
+                geoDict[surveyDataAnswers[y]['_id']] = personalDict
     
     js_data = simplejson.dumps(geoDict)                 
     context = {'surveysJs': js_data, 'geoDictionary': geoDict}    
