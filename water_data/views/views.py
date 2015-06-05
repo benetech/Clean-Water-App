@@ -10,6 +10,7 @@ from io import BytesIO
 import StringIO
 import xlsxwriter
 import datetime
+from collections import OrderedDict
 from urllib2 import urlopen
 
 #Constants
@@ -48,6 +49,11 @@ def index(request, login_name):
     return render(request, 'water_data/index.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
     
+
+def getEpochTime(dt):
+    epoch = datetime.datetime.utcfromtimestamp(0)
+    delta = dt - epoch
+    return delta.total_seconds()
   
 def listSubmissions(request, survey_id, login_name, survey_title):  
            
@@ -66,9 +72,12 @@ def listSubmissions(request, survey_id, login_name, survey_title):
             else:
                 dataDict['has_photos'] = True         
             d = datetime.datetime.strptime(surveyData[x]['_submission_time'], '%Y-%m-%dT%H:%M:%S')
+            dataDict['epochTime'] = getEpochTime(d)
             dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M')    
             dataDict['submission_id'] = surveyData[x]['_id']       
             surveyDict[surveyData[x]['personalization_group/personalization_question_3']] = dataDict
+        
+        sortedSurveyDict = OrderedDict(sorted(surveyDict.items(), key=lambda t: t[1]['epochTime'], reverse=True))
       
-    context = {'surveys': surveyDict, 'title': survey_title, 'url' : full_url}    
+    context = {'surveys': sortedSurveyDict, 'title': survey_title, 'url' : full_url}    
     return render(request, 'water_data/listSubmissions.html', context)     
