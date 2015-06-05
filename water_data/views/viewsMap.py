@@ -11,6 +11,7 @@ from io import BytesIO
 import StringIO
 import xlsxwriter
 import datetime
+import random
 from urllib2 import urlopen
 
 #Constants
@@ -26,7 +27,6 @@ def mapMarkers(request, login_name):
     surveyData = json.loads(result.content)
     
     geoDict = {}
-    personalDict = {}
     
     if surveyData:
         for x in range(0, len(surveyData)):    
@@ -36,6 +36,7 @@ def mapMarkers(request, login_name):
             
             #add personalization and geo data into dictionary
             for y in range(0, len(surveyDataAnswers)):
+                personalDict = {}
                 personalDict['geo'] = surveyDataAnswers[y]['_geolocation']
                 personalDict['q_1'] = surveyDataAnswers[y]['personalization_group/personalization_question_1']
                 personalDict['q_2'] = surveyDataAnswers[y]['personalization_group/personalization_question_2']
@@ -44,11 +45,14 @@ def mapMarkers(request, login_name):
                 personalDict['q_5'] = surveyDataAnswers[y]['personalization_group/personalization_question_5']
                 personalDict['q_6'] = surveyDataAnswers[y]['personalization_group/personalization_question_6']
                 personalDict['q_7'] = surveyDataAnswers[y]['personalization_group/personalization_question_7']
-    
+                personalDict['score'] = random.randint(0,100)
                 geoDict[surveyDataAnswers[y]['_id']] = personalDict
+                
+        # for key,value in geoDict.iteritems():
+        #     print key
+        #     print geoDict[key]
     
     js_data = simplejson.dumps(geoDict)                 
     context = {'surveysJs': js_data, 'geoDictionary': geoDict}    
     return render(request, 'water_data/map.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
-      
