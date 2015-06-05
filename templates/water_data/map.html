@@ -26,42 +26,44 @@
         var bounds = new google.maps.LatLngBounds();
 
         for (var i = 0; i < data.length; i++) {
-          var latlng = new google.maps.LatLng(data[i]["latlng"][0], data[i]["latlng"][1]);
-          bounds.extend(latlng);
-          var text = data[i]["text"];
-          var score = data[i]["score"];
-          
-          // Creates a marker.
-          var marker = new google.maps.Marker({
-            position: latlng,
-            map: mapCanvas,
-            title: text,
-            icon: getIconForScore(score)
-          });
-          
-          // The infoWindow is opened when the sidebar button is clicked.
-          google.maps.event.addListener(marker, "click", function(marker, text) {
-            // Creates a info window object.
-            
-            infoWnd.setContent("<strong>" + text + "</strong>");
-            infoWnd.open(mapCanvas, marker);
-          }.bind(null, marker, text));
-          
-          // Creates a sidebar button for the marker.
-          var ul = document.getElementById("lista");
-          var li = document.createElement("li");
-          li.innerHTML = text;
-          ul.appendChild(li);
-  
-          //Trigger a click event to marker when the button is clicked.
-          google.maps.event.addDomListener(li, "click", function(marker) {
-            google.maps.event.trigger(marker, "click");
-          }.bind(null, marker));
+          createMarker(data[i], bounds);
         }
         // Fits the map bounds.
         mapCanvas.fitBounds(bounds);
       }
       
+      function createMarker(data_item, bounds) {
+        var latlng = new google.maps.LatLng(data_item["latlng"][0], data_item["latlng"][1]);
+        bounds.extend(latlng);
+        var text = data_item["text"];
+        var score = data_item["score"];
+          
+        // Creates a marker.
+        var marker = new google.maps.Marker({
+          position: latlng,
+          map: mapCanvas,
+          title: text,
+          icon: getIconForScore(score)
+        });
+          
+        // The infoWindow is opened when the sidebar button is clicked.
+        google.maps.event.addListener(marker, "click", function(marker, text) {
+          // Creates a info window object.
+          infoWnd.setContent("<strong>" + text + "</strong>");
+          infoWnd.open(mapCanvas, marker);
+        }.bind(null, marker, text));
+          
+        // Creates a sidebar button for the marker.
+        var ul = document.getElementById("lista");
+        var li = document.createElement("li");
+        li.innerHTML = text;
+        ul.appendChild(li);
+  
+        //Trigger a click event to marker when the button is clicked.
+        google.maps.event.addDomListener(li, "click", function(marker) {
+          google.maps.event.trigger(marker, "click");
+        }.bind(null, marker));
+      }
       
       var mapCanvas;
       var infoWnd;
