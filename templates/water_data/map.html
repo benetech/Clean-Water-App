@@ -14,10 +14,22 @@
           center: { lat: -34.397, lng: 150.644},
           zoom: 2
         };
-        
+
         var map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
-            
+        for (var key in surveys) {
+          var pos = surveys[key];
+          if (pos.length == 2 && pos[0] && pos[1]) {
+            var marker = new google.maps.Marker({
+              position: new google.maps.LatLng(parseFloat(pos[0]), parseFloat(pos[1])),
+              map: map,
+              icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+              title: key
+            });
+          }
+           
+        }
+        /*
         var redMarker = new google.maps.Marker({
           position: new google.maps.LatLng(-34.397, 150.644),
           map: map,
@@ -38,6 +50,7 @@
           map: map,
           icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
         });
+        */
       }
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
