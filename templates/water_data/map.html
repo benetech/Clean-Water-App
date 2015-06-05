@@ -8,40 +8,95 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_jN80Yt6QRKv9az9MU7ABMLbOK8g8SFw">
     </script>
     <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: { lat: -34.397, lng: 150.644},
-          zoom: 2
-        };
-        
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
-            
-        var redMarker = new google.maps.Marker({
-          position: new google.maps.LatLng(-34.397, 150.644),
-          map: map,
-          icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-        });
-        var orangeMarker = new google.maps.Marker({
-          position: new google.maps.LatLng(34.397, 150.644),
-          map: map,
-          icon: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'
-        });
-        var yellowMarker = new google.maps.Marker({
-          position: new google.maps.LatLng(-34.397, -150.644),
-          map: map,
-          icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-        });
-        var greenMarker = new google.maps.Marker({
-          position: new google.maps.LatLng(34.397, -150.644),
-          map: map,
-          icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-        });
+
+
+      function getIconForScore(score) {
+        if (score == 1) {
+          return 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+        }  else if (score == 2) {
+          return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+        } else if (score == 3) {
+          return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+        } else if (score == 4) {
+          return 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+        }
       }
+      
+      function loadMarkers(data) {
+        var bounds = new google.maps.LatLngBounds();
+
+        for (var i = 0; i < data.length; i++) {
+          var latlng = new google.maps.LatLng(data[i]["latlng"][0], data[i]["latlng"][1]);
+          bounds.extend(latlng);
+          var text = data[i]["text"];
+          var score = data[i]["score"];
+          
+          // Creates a marker.
+          var marker = new google.maps.Marker({
+            position: latlng,
+            map: mapCanvas,
+            title: text,
+            icon: getIconForScore(score)
+          });
+          
+          // The infoWindow is opened when the sidebar button is clicked.
+          google.maps.event.addListener(marker, "click", function(marker, text) {
+            // Creates a info window object.
+            
+            infoWnd.setContent("<strong>" + text + "</strong>");
+            infoWnd.open(mapCanvas, marker);
+          }.bind(null, marker, text));
+          
+          // Creates a sidebar button for the marker.
+          var ul = document.getElementById("lista");
+          var li = document.createElement("li");
+          li.innerHTML = text;
+          ul.appendChild(li);
+  
+          //Trigger a click event to marker when the button is clicked.
+          google.maps.event.addDomListener(li, "click", function(marker) {
+            google.maps.event.trigger(marker, "click");
+          }.bind(null, marker));
+        }
+        // Fits the map bounds.
+        mapCanvas.fitBounds(bounds);
+      }
+      
+      
+      var mapCanvas;
+      var infoWnd;
+      function initialize() {
+ 
+        // Creates a map object.
+        mapCanvas = new google.maps.Map(document.getElementById('map-canvas'));
+        infoWnd = new google.maps.InfoWindow();
+        mapCanvas.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+
+        // sample test data
+        var data = [
+          {"score": 1, "latlng": [-34.397, 50.644], "text": "data1"},
+          {"score": 2, "latlng": [-34.397, -50.644], "text": "data2"},
+          {"score": 3, "latlng": [34.397, 50.644], "text": "data3"},
+          {"score": 4, "latlng": [34.397, -50.644], "text": "data4"}
+        ];
+
+        loadMarkers(data);
+      }
+    
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
+ 
+ 
   <body>
-<div id="map-canvas"></div>
+    <div id="lista">
+      <h3> Submissions
+      </h3>
+      <div style=" height: 80px;overflow-y: scroll;">
+      </div>
+    </div>
+  
+  <div id="map-canvas"></div>
+
   </body>
 </html>
