@@ -3,6 +3,11 @@
   <head>
     <style type="text/css">
       html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+      h3 {padding:0 10px 0 20px;}
+      #lista {background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.6);border-radius:12px 12px 12px 12px;box-shadow:0 0 16px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.1) inset;height:300px;padding:10px 0 0;position:absolute;right:5px;top:250px;width:200px;z-index:999;}
+      #lista li {border-top:1px solid #36abe6;font-size:11pt;list-style:none outside none;text-shadow:0 1px 0 rgba(255,255,255,0.9);width:130px;}
+      #lista li:hover {cursor:pointer;font-weight:700;}
+      #lista ul {margin:0;padding:0 0 0 24px;}
     </style>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_jN80Yt6QRKv9az9MU7ABMLbOK8g8SFw">
@@ -20,7 +25,7 @@
           return 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
         }
       }
-      
+
       function loadMarkers(data) {
         var bounds = new google.maps.LatLngBounds();
 
@@ -53,7 +58,7 @@
         }.bind(null, marker, text));
           
         // Creates a sidebar button for the marker.
-        var ul = document.getElementById("lista");
+        var ul = document.getElementById("lista_body");
         var li = document.createElement("li");
         li.innerHTML = text;
         ul.appendChild(li);
@@ -107,6 +112,8 @@
       <h3> Submissions
       </h3>
       <div style=" height: 80px;overflow-y: scroll;">
+        <ul id="lista_body">
+        </ul>
       </div>
     </div>
   
