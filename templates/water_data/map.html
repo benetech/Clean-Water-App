@@ -1,31 +1,25 @@
+<!DOCTYPE html>
 <html>
-
-{% load bootstrap3 %}
-{% bootstrap_css %} 
-{% bootstrap_javascript %}
-
-
-<style>
-
-.avina_img {
-	text-align:center;
-	position:absolute;
-	bottom:5px;
-	width:100%;
-}
-
-img {
-	width:156px;
-	height:73px;
-	position:relative;
-}
-
-table {
-	background-color:#E6EEF5;
-}
-
-</style>
-
-<h3> I am a map </h3>
-
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_jN80Yt6QRKv9az9MU7ABMLbOK8g8SFw">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: { lat: -34.397, lng: 150.644},
+          zoom: 8
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+<div id="map-canvas"></div>
+  </body>
 </html>
