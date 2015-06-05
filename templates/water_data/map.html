@@ -11,18 +11,33 @@
       function initialize() {
         var mapOptions = {
           center: { lat: -34.397, lng: 150.644},
-          zoom: 8
+          zoom: 2
         };
+        
         var map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
-
-        var marker = new google.maps.Marker({
-          position: {lat: -34.397, lng: 150.644},
+            
+        var redMarker = new google.maps.Marker({
+          position: new google.maps.LatLng(-34.397, 150.644),
           map: map,
-          title: 'Test marker'
+          icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+        var orangeMarker = new google.maps.Marker({
+          position: new google.maps.LatLng(34.397, 150.644),
+          map: map,
+          icon: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'
+        });
+        var yellowMarker = new google.maps.Marker({
+          position: new google.maps.LatLng(-34.397, -150.644),
+          map: map,
+          icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+        });
+        var greenMarker = new google.maps.Marker({
+          position: new google.maps.LatLng(34.397, -150.644),
+          map: map,
+          icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
         });
       }
-
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
