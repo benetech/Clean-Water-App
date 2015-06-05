@@ -1,6 +1,7 @@
 #_*_ coding: utf-8
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils import simplejson
 import sys
 import os
 import requests
@@ -33,8 +34,9 @@ def mapMarkers(request, login_name):
             for y in range(0, len(surveyDataAnswers)):
                 geoDict[surveyDataAnswers[y]['personalization_group/personalization_question_3']] = surveyDataAnswers[y]['_geolocation']
 
-                     
-    context = {'geoDictionary': geoDict}    
+    
+    js_data = simplejson.dumps(geoDict)                 
+    context = {'surveysJs': js_data, 'geoDictionary': geoDict}    
     return render(request, 'water_data/map.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
       

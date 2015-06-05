@@ -8,6 +8,7 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_jN80Yt6QRKv9az9MU7ABMLbOK8g8SFw">
     </script>
     <script type="text/javascript">
+      var surveys = {{ surveysJs|safe }};
       function initialize() {
         var mapOptions = {
           center: { lat: -34.397, lng: 150.644},
