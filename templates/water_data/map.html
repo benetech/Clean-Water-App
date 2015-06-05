@@ -15,13 +15,13 @@
     <script type="text/javascript">
 
       function getIconForScore(score) {
-        if (score == 1) {
+        if (score <= 30) {
           return 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
-        }  else if (score == 2) {
+        }  else if (score <= 55) {
           return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
-        } else if (score == 3) {
+        } else if (score <= 80) {
           return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-        } else if (score == 4) {
+        } else {
           return 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
         }
       }
@@ -29,8 +29,8 @@
       function loadMarkers(data) {
         var bounds = new google.maps.LatLngBounds();
 
-        for (var i = 0; i < data.length; i++) {
-          createMarker(data[i], bounds);
+        for (var key in data) {
+          createMarker(data[key], bounds);
         }
         // Fits the map bounds.
         mapCanvas.fitBounds(bounds);
@@ -39,7 +39,7 @@
       function createMarker(data_item, bounds) {
         var latlng = new google.maps.LatLng(data_item["latlng"][0], data_item["latlng"][1]);
         bounds.extend(latlng);
-        var text = data_item["text"];
+        var text = data_item["q_1"];
         var score = data_item["score"];
           
         // Creates a marker.
@@ -69,7 +69,6 @@
         }.bind(null, marker));
       }
 
-      var surveys = {{ surveysJs|safe }};
       var mapCanvas;
       var infoWnd;
       function initialize() {
@@ -79,27 +78,9 @@
         infoWnd = new google.maps.InfoWindow();
         mapCanvas.setMapTypeId(google.maps.MapTypeId.ROADMAP);
 
-        // sample test data
-        var data = [
-          {"score": 1, "latlng": [-34.397, 50.644], "text": "data1"},
-          {"score": 2, "latlng": [-34.397, -50.644], "text": "data2"},
-          {"score": 3, "latlng": [34.397, 50.644], "text": "data3"},
-          {"score": 4, "latlng": [34.397, -50.644], "text": "data4"}
-        ];
+        var surveyData = {{ surveysJs|safe }};
+        loadMarkers(surveyData);
 
-        loadMarkers(data);
-        
-        for (var key in surveys) {
-          var pos = surveys[key];
-          if (pos.length == 2 && pos[0] && pos[1]) {
-            var marker = new google.maps.Marker({
-              position: new google.maps.LatLng(parseFloat(pos[0]), parseFloat(pos[1])),
-              map: map,
-              icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-              title: key
-            });
-          }
-        }
       }
     
       google.maps.event.addDomListener(window, 'load', initialize);

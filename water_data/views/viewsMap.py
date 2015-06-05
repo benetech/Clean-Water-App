@@ -37,7 +37,7 @@ def mapMarkers(request, login_name):
             #add personalization and geo data into dictionary
             for y in range(0, len(surveyDataAnswers)):
                 personalDict = {}
-                personalDict['geo'] = surveyDataAnswers[y]['_geolocation']
+                personalDict['latlng'] = surveyDataAnswers[y]['_geolocation']
                 personalDict['q_1'] = surveyDataAnswers[y]['personalization_group/personalization_question_1']
                 personalDict['q_2'] = surveyDataAnswers[y]['personalization_group/personalization_question_2']
                 personalDict['q_3'] = surveyDataAnswers[y]['personalization_group/personalization_question_3']
