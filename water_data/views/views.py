@@ -35,13 +35,13 @@ def index(request, login_name):
         dataDict['url'] = item['url']
         dateCreated = item.get('date_created')
         if dateCreated is not None:
-          d = datetime.strptime(dateCreated, '%Y-%m-%dT%H:%M:%S.%fZ')
-          dataDict['date_created'] = d.strftime('%b %d, %Y %H:%M')
+          d = datetime.strptime(dateCreated, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=utc)
+          dataDict['date_created'] = d.strftime('%b %d, %Y %H:%M%Z')
         dataDict['formid'] = item['formid']
         lastSubmission = item.get('last_submission_time')
         if lastSubmission is not None:
-          d = datetime.strptime(lastSubmission, '%Y-%m-%dT%H:%M:%S.%fZ')
-          dataDict['last_submission_time'] = d.strftime('%b %d, %Y %H:%M')
+          d = datetime.strptime(lastSubmission, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=utc)
+          dataDict['last_submission_time'] = d.strftime('%b %d, %Y %H:%M%Z')
         dataDict['num_of_submissions'] = item['num_of_submissions']
         dataDict['login_name'] = login_name
         surveyDict[item['title']] = dataDict
@@ -52,7 +52,7 @@ def index(request, login_name):
 
 
 def getEpochTime(dt):
-    epoch = datetime.utcfromtimestamp(0)
+    epoch = datetime.utcfromtimestamp(0).replace(tzinfo=utc)
     delta = dt - epoch
     return delta.total_seconds()
 
@@ -68,13 +68,13 @@ def listSubmissions(request, survey_id, login_name, survey_title):
       for item in surveyData:
         dataDict = {}
         dataDict['has_photos'] = '_attachments' in item
-        d = datetime.strptime(item['_submission_time'], '%Y-%m-%dT%H:%M:%S')
-        dataDict['epochTime'] = getEpochTime(d)
-        dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M')
+        d = datetime.strptime(item['_submission_time'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
+        dataDict['epoch_time'] = getEpochTime(d)
+        dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M%Z')
         dataDict['submission_id'] = item['_id']
         dataDict['ocsa_name'] = item['personalization_group/personalization_question_3']
         surveyDict[dataDict['submission_id']] = dataDict
 
-    sortedSurveyDict = OrderedDict(sorted(surveyDict.items(), key=lambda t: t[1]['epochTime'], reverse=True))
+    sortedSurveyDict = OrderedDict(sorted(surveyDict.items(), key=lambda t: t[1]['epoch_time'], reverse=True))
     context = {'surveys': sortedSurveyDict, 'title': survey_title, 'url' : full_url}
     return render(request, 'water_data/listSubmissions.html', context)
