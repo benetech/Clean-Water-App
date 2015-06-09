@@ -13,14 +13,12 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
-FHServer = "http://54.86.146.199"
-
 def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
     
     output = StringIO.StringIO()
     
-    urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
-    urlQuestions = FHServer + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+    urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
+    urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
    
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}

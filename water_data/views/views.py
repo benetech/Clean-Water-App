@@ -18,12 +18,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.timezone import utc
 
-#Constants
-FHServer = "http://54.86.146.199"
-
 # Index displays the data on the first page
 def index(request, login_name):
-    url = FHServer + "/api/v1/forms/" + login_name
+    url = settings.FH_SERVER + "/api/v1/forms/" + login_name
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}
     result = requests.get(url, headers=headers)
@@ -47,7 +44,7 @@ def index(request, login_name):
         dataDict['login_name'] = login_name
         surveyDict[item['title']] = dataDict
 
-    context = {'surveys': surveyDict, 'FHServer': FHServer + '/' + login_name}
+    context = {'surveys': surveyDict, 'FHServer': settings.FH_SERVER + '/' + login_name}
     return render(request, 'water_data/index.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
 
@@ -59,7 +56,7 @@ def getEpochTime(dt):
 
 
 def listSubmissions(request, survey_id, login_name, survey_title):
-    url = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
+    url = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
     full_url = request.build_absolute_uri(None)
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}

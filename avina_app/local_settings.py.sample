@@ -12,3 +12,5 @@ FH_API_TOKENS = {
     "cleanwater": "",
 }
 
+FH_SERVER = 'http://54.86.146.199'
+
