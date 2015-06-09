@@ -16,6 +16,10 @@ FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
+def googleDriveLink(request, survey_id, login_name, survey_title, submission_id):
+  return HttpResponse(json.dumps("http://en.wikipedia.org/wiki/Success"),
+    content_type="application/json")
+
 def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
     
     output = StringIO.StringIO()
@@ -368,4 +372,3 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             response['Content-Disposition'] = 'attachment; filename=' + OCSA_name + '.xlsx'
 
             return response
-            
