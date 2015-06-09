@@ -38,7 +38,7 @@
       
       function downloadCallback(id) {
         var data_item = surveyData[id];
-        var ajax_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["q_3"] + "/googleDriveLink/" + id;
+        var ajax_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["formName"] + "/googleDriveLink/" + id;
         
         var xmlhttp;
         if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
