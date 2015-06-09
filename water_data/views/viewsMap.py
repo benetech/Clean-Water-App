@@ -34,6 +34,8 @@ def mapMarkers(request, login_name):
             resultAnswers = requests.get(urlAnswers, headers=headers)
             surveyDataAnswers = json.loads(resultAnswers.content)
             
+            print surveyDataAnswers
+            
             #add personalization and geo data into dictionary
             for y in range(0, len(surveyDataAnswers)):
                 personalDict = {}
@@ -47,6 +49,7 @@ def mapMarkers(request, login_name):
                 personalDict['q_7'] = surveyDataAnswers[y]['personalization_group/personalization_question_7']
                 personalDict['score'] = random.randint(0,100)
                 personalDict['formid'] = str(surveyData[x]['formid'])
+                personalDict['formName'] = surveyDataAnswers[y]['_xform_id_string']
                 geoDict[surveyDataAnswers[y]['_id']] = personalDict
                 
         # for key,value in geoDict.iteritems():

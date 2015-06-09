@@ -39,7 +39,7 @@
       function createMarker(data_item, id, bounds) {
         var latlng = new google.maps.LatLng(data_item["latlng"][0], data_item["latlng"][1]);
         bounds.extend(latlng);
-        var download_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["q_3"] + "/xlsDownload/" + id;
+        var download_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["formName"] + "/xlsDownload/" + id;
         var text = data_item["q_3"];
         var score = data_item["score"];
           
