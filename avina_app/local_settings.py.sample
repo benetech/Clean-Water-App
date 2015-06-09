@@ -1,0 +1,14 @@
+"""
+Local settings for avina_app project.
+
+Sensitive data should go here and this file should never be check in with
+the source code.
+
+See settings.py and local_settings.py.sample
+"""
+
+# Map from FormHub login names to corresponding API Tokens.
+FH_API_TOKENS = {
+    "cleanwater": "",
+}
+
