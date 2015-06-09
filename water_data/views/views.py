@@ -18,7 +18,6 @@ from django.http import HttpResponse
 from django.utils.timezone import utc
 
 #Constants
-FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 

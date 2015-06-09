@@ -15,7 +15,6 @@ import random
 from urllib2 import urlopen
 
 #Constants
-FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
