@@ -13,18 +13,22 @@ from collections import OrderedDict
 from urllib2 import urlopen
 from io import BytesIO
 
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.timezone import utc
 
-#Constants
-FHPass = "cleanwaterpass"
-FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
-
 # Index displays the data on the first page
 def index(request, login_name):
-    url = FHServer + "/api/v1/forms/" + login_name
+    if not (hasattr(settings, 'FH_API_TOKENS') and hasattr(settings, 'FH_SERVER')):
+        raise Exception('A fully configured local_settings.py is needed, start with local_settings.py.sample.')
+
+    if not login_name in settings.FH_API_TOKENS or not settings.FH_API_TOKENS[login_name]:
+        raise Exception('No API Token found for: ' + login_name + ', add it to local_settings.py')
+
+    url = settings.FH_SERVER + "/api/v1/forms/" + login_name
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
 
@@ -46,7 +50,7 @@ def index(request, login_name):
         dataDict['login_name'] = login_name
         surveyDict[item['title']] = dataDict
 
-    context = {'surveys': surveyDict, 'FHServer': FHServer + '/' + login_name}
+    context = {'surveys': surveyDict, 'FHServer': settings.FH_SERVER + '/' + login_name}
     return render(request, 'water_data/index.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
 
@@ -58,8 +62,10 @@ def getEpochTime(dt):
 
 
 def listSubmissions(request, survey_id, login_name, survey_title):
-    url = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
+    url = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
     full_url = request.build_absolute_uri(None)
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
 

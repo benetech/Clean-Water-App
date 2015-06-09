@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import dj_database_url
+
+try:
+    from local_settings import *
+except ImportError, e:
+    print 'SEVERE: could not load local_settings.py! Start with local_settings.py.sample'
+    raise e
+
 # BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
 
