@@ -46,6 +46,7 @@ def mapMarkers(request, login_name):
                 personalDict['q_6'] = surveyDataAnswers[y]['personalization_group/personalization_question_6']
                 personalDict['q_7'] = surveyDataAnswers[y]['personalization_group/personalization_question_7']
                 personalDict['score'] = random.randint(0,100)
+                personalDict['formid'] = str(surveyData[x]['formid'])
                 geoDict[surveyDataAnswers[y]['_id']] = personalDict
                 
         # for key,value in geoDict.iteritems():
