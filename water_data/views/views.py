@@ -20,6 +20,12 @@ from django.utils.timezone import utc
 
 # Index displays the data on the first page
 def index(request, login_name):
+    if not (hasattr(settings, 'FH_API_TOKENS') and hasattr(settings, 'FH_SERVER')):
+        raise Exception('A fully configured local_settings.py is needed, start with local_settings.py.sample.')
+
+    if not login_name in settings.FH_API_TOKENS or not settings.FH_API_TOKENS[login_name]:
+        raise Exception('No API Token found for: ' + login_name + ', add it to local_settings.py')
+
     url = settings.FH_SERVER + "/api/v1/forms/" + login_name
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}
