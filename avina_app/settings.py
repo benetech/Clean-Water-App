@@ -14,8 +14,9 @@ import dj_database_url
 
 try:
     from local_settings import *
-except ImportError:
-    pass
+except ImportError, e:
+    print 'SEVERE: could not load local_settings.py! Start with local_settings.py.sample'
+    raise e
 
 # BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
