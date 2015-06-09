@@ -365,7 +365,7 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             output.seek(0)
 
             response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=' + OCSA_name + '.xlsx'
+            response['Content-Disposition'] = 'filename=' + OCSA_name + '.xlsx'
 
             return response
             
