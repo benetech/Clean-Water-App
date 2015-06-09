@@ -1,4 +1,5 @@
 #_*_ coding: utf-8
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils import simplejson
@@ -16,12 +17,15 @@ from urllib2 import urlopen
 
 #Constants
 FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
 # Index displays the data on the first page
 def mapMarkers(request, login_name):
     
     url = FHServer + "/api/v1/forms/" + login_name
+   
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
+
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
     

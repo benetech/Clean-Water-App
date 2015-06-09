@@ -1,4 +1,5 @@
 #_*_ coding: utf-8
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 import sys
@@ -13,7 +14,6 @@ import datetime
 from urllib2 import urlopen
 
 FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
 def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
     
@@ -22,6 +22,9 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
     urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
     urlQuestions = FHServer + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
    
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
+
     result = requests.get(urlAnswers, headers=headers)
     dataAnswers = json.loads(result.content)
     result = requests.get(urlQuestions, headers=headers)
