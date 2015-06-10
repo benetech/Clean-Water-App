@@ -9,6 +9,7 @@
       #lista li:hover {cursor:pointer;font-weight:700;}
       #lista ul {margin:0;padding:0 0 0 24px;}
       #filter_pane {background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.6);border-radius:12px 12px 12px 12px;box-shadow:0 0 16px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.1) inset;height:100px;padding:10px 0 0;position:absolute;right:5px;top:50px;width:200px;z-index:999;}
+      .excluded { display: none; }
     </style>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_jN80Yt6QRKv9az9MU7ABMLbOK8g8SFw">
@@ -16,26 +17,27 @@
     <script type="text/javascript">
 
       function filterChanged(value) {
-        document.getElementById("range_label").innerHTML=value;
+        document.getElementById("range_label").innerHTML = scores[value];
         for (i in markers) {
-          if (markers[i].score > value) {
-            markers[i].setMap(null);
+          marker = markers[i];
+          var li = document.getElementById('marker_'+marker.id);
+          if (marker.score > scores[value]) {
+            marker.setMap(null);
+            li.setAttribute('class', 'excluded');
           } else {
-            markers[i].setMap(mapCanvas);
+            marker.setMap(mapCanvas);
+            li.setAttribute('class', 'included');
           }
         }
       }
 
       function getIconForScore(score) {
-        if (score <= 30) {
-          return 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
-        }  else if (score <= 55) {
-          return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
-        } else if (score <= 80) {
-          return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-        } else {
-          return 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+        for (var i = 0; i < scores.length; i++) {
+          if (score < scores[i]) {
+            return icons[i];
+          }
         }
+        return icons[icons.length - 1];
       }
 
       function loadMarkers(data) {
@@ -64,6 +66,9 @@
           score: score
         });
 
+        // Add id so that we can lookup elements associated with this marker.
+        marker.id = id
+
         markers.push(marker);
           
         // The infoWindow is opened when the sidebar button is clicked.
@@ -78,6 +83,8 @@
         // Creates a sidebar button for the marker.
         var ul = document.getElementById("lista_body");
         var li = document.createElement("li");
+        li.setAttribute('id', 'marker_' + id);
+        li.setAttribute('class', 'included');
         li.innerHTML = text;
         ul.appendChild(li);
   
@@ -89,9 +96,24 @@
 
       var mapCanvas;
       var infoWnd;
-      var markers = []
+      var markers = [];
+      var scores, icons;
       function initialize() {
-      
+        // Creates data structures for filtering logic.
+        scores = [0, 30,55,80,100];
+        icons = [
+          '',
+          'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+          'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+          'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+          ];
+
+        var input =
+          document.getElementById('filter_pane').getElementsByTagName('input')[0];
+        input.setAttribute('value', scores.length - 1);
+        input.setAttribute('max', scores.length - 1);
+
         // Creates a map object.
         mapCanvas = new google.maps.Map(document.getElementById('map-canvas'));
         infoWnd = new google.maps.InfoWindow();
@@ -109,7 +131,7 @@
   <body>
     <div id="filter_pane">
       <h3> Filter</h3>
-      <input type="range" min="0" max="100" value="100" onchange="filterChanged(this.value)"/>
+      <input type="range" min="0" max="1" value="1" onchange="filterChanged(this.value)"/>
       <span id="range_label">100</span>
     </div>
 
