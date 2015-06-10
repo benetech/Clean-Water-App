@@ -59,7 +59,10 @@ table {
 			<td>
 				<a href="{{ url }}xlsDownload/{{ value.submission_id }}">Download</a></td>
 			{% if value.has_photos %}
-			<td><a href="{{ url }}photosDownload/{{ value.submission_id }}">Download</a></td>
+      <td>
+        <a href="#" onclick='downloadPhotos("{{ url }}", "{{ value.submission_id }}")'>Download</a>
+        <div id="spinner{{ value.submission_id}}"></div>
+      </td>
 			{% endif %}
 		</tr>
 		{% endfor %}
@@ -68,5 +71,33 @@ table {
 </table>
 
 <div class="avina_img"><img src = http://www.avina.net/esp/wp-content/uploads/2013/02/logo_avina.jpg></div>
+
+<script>
+  function downloadPhotos(url_base, submission_id) {
+    var initialUrl = url_base + "photosStart/" + submission_id;
+    var initialRequest = new XMLHttpRequest();
+    var task_id = -1;
+    initialRequest.onreadystatechange = function() {
+      if (task_id == -1) {
+        task_id = JSON.parse(initialRequest.responseText).task_id;
+        var checkUrl = "/surveydata/cleanwater/photosCheck/" + task_id;
+        var finishUrl = "/surveydata/cleanwater/photosFinish/" + task_id;
+        var checkInterval = setInterval(function() {
+          var checkRequest = new XMLHttpRequest();
+          checkRequest.onreadystatechange = function() {
+            ready = JSON.parse(checkRequest.responseText).ready;
+            if (ready) {
+              window.location = finishUrl;
+            }
+          };
+          checkRequest.open('GET', checkUrl, true);
+          checkRequest.send();
+        }, 100);
+      };
+    }
+    initialRequest.open('GET', initialUrl, true);
+    initialRequest.send();
+  }
+</script>
 
 </html>
