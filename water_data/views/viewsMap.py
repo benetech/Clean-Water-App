@@ -1,4 +1,5 @@
 #_*_ coding: utf-8
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils import simplejson
@@ -14,15 +15,14 @@ import datetime
 import random
 from urllib2 import urlopen
 
-#Constants
-FHPass = "cleanwaterpass"
-FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
-
 # Index displays the data on the first page
 def mapMarkers(request, login_name):
     
-    url = FHServer + "/api/v1/forms/" + login_name
+    url = settings.FH_SERVER + "/api/v1/forms/" + login_name
+   
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
+
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
     
@@ -30,12 +30,12 @@ def mapMarkers(request, login_name):
     questions = {} # map of survey id to questions
     
     if surveyData:
-        for x in range(0, len(surveyData)):    
+        for x in range(0, len(surveyData)):
             survey_id = str(surveyData[x]['formid'])
-            urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
+            urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
 
             if not questions.get(survey_id):
-                urlQuestions = FHServer + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+                urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
                 result = requests.get(urlQuestions, headers=headers)
                 dataQuestions = json.loads(result.content)
                 questions[survey_id] = dataQuestions
@@ -66,6 +66,7 @@ def mapMarkers(request, login_name):
 
                 personalDict['score'] = random.randint(0,100)
                 personalDict['formid'] = str(surveyData[x]['formid'])
+                personalDict['formName'] = surveyDataAnswers[y]['_xform_id_string']
                 geoDict[surveyDataAnswers[y]['_id']] = personalDict
                 
         # for key,value in geoDict.iteritems():

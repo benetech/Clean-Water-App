@@ -1,4 +1,5 @@
 #_*_ coding: utf-8
+from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
 import sys
@@ -12,24 +13,15 @@ import xlsxwriter
 import datetime
 from urllib2 import urlopen
 
-FHPass = "cleanwaterpass"
-FHServer = "http://54.86.146.199"
-headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
-
-def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
-    OCSA_name, output = xlsGenerate(survey_id, login_name, submission_id) 
-    response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=' + OCSA_name + '.xlsx'
-    return response
-
-def xlsGenerate(survey_id, login_name, submission_id):   
-    """Generates an XLSX file. Returns a tuple (name,data) where the name is the OCSA name and
-    the data is a StringIO object.
-    """    
+def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
+    
     output = StringIO.StringIO()
     
-    urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
-    urlQuestions = FHServer + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+    urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
+    urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+   
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
 
     result = requests.get(urlAnswers, headers=headers)
     dataAnswers = json.loads(result.content)
@@ -370,4 +362,8 @@ def xlsGenerate(survey_id, login_name, submission_id):
 
             workbook.close()
             output.seek(0)
-            return OCSA_name, output
+
+            response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'filename=' + OCSA_name + '.xlsx'
+
+            return response

@@ -8,11 +8,23 @@
       #lista li {border-top:1px solid #36abe6;font-size:11pt;list-style:none outside none;text-shadow:0 1px 0 rgba(255,255,255,0.9);width:130px;}
       #lista li:hover {cursor:pointer;font-weight:700;}
       #lista ul {margin:0;padding:0 0 0 24px;}
+      #filter_pane {background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.6);border-radius:12px 12px 12px 12px;box-shadow:0 0 16px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.1) inset;height:100px;padding:10px 0 0;position:absolute;right:5px;top:50px;width:200px;z-index:999;}
     </style>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_jN80Yt6QRKv9az9MU7ABMLbOK8g8SFw">
     </script>
     <script type="text/javascript">
+
+      function filterChanged(value) {
+        document.getElementById("range_label").innerHTML=value;
+        for (i in markers) {
+          if (markers[i].score > value) {
+            markers[i].setMap(null);
+          } else {
+            markers[i].setMap(mapCanvas);
+          }
+        }
+      }
 
       function getIconForScore(score) {
         if (score <= 30) {
@@ -39,7 +51,7 @@
       function createMarker(data_item, id, bounds) {
         var latlng = new google.maps.LatLng(data_item["latlng"][0], data_item["latlng"][1]);
         bounds.extend(latlng);
-        var download_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["a_3"] + "/xlsDownload/" + id;
+        var download_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["formName"] + "/xlsDownload/" + id;
         var text = data_item["a_3"];
         var score = data_item["score"];
           
@@ -48,8 +60,11 @@
           position: latlng,
           map: mapCanvas,
           title: text,
-          icon: getIconForScore(score)
+          icon: getIconForScore(score),
+          score: score
         });
+
+        markers.push(marker);
           
         // The infoWindow is opened when the sidebar button is clicked.
         google.maps.event.addListener(marker, "click", function(marker, text) {
@@ -79,6 +94,7 @@
 
       var mapCanvas;
       var infoWnd;
+      var markers = []
       function initialize() {
       
         // Creates a map object.
@@ -96,6 +112,12 @@
  
  
   <body>
+    <div id="filter_pane">
+      <h3> Filter</h3>
+      <input type="range" min="0" max="100" value="100" onchange="filterChanged(this.value)"/>
+      <span id="range_label">100</span>
+    </div>
+
     <div id="lista">
       <h3> Submissions
       </h3>
