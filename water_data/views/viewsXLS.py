@@ -41,7 +41,6 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             answerDict['question'] = data['label']
             questionDict[data['name']] = answerDict     
 
-
     #------------------------------------------
     #------------------------------------------
     #------------------------------------------
@@ -368,4 +367,3 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             response['Content-Disposition'] = 'filename=' + OCSA_name + '.xlsx'
 
             return response
-            

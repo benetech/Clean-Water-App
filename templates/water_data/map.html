@@ -54,7 +54,7 @@
         var latlng = new google.maps.LatLng(data_item["latlng"][0], data_item["latlng"][1]);
         bounds.extend(latlng);
         var download_url = "/surveydata/cleanwater/" + data_item["formid"] + "/" + data_item["formName"] + "/xlsDownload/" + id;
-        var text = data_item["q_3"];
+        var text = data_item["a_3"];
         var score = data_item["score"];
           
         // Creates a marker.
@@ -74,9 +74,14 @@
         // The infoWindow is opened when the sidebar button is clicked.
         google.maps.event.addListener(marker, "click", function(marker, text) {
           // Creates a info window object.
-            infoWnd.setContent("<strong>" + text + 
-              "<br><a href=\"" + download_url + "\">Download Dashboard</a>" +
-              "</strong>");
+            infoWnd.setContent("<strong>" + text + "</strong><br>" +
+              "<br>" + data_item["q_1"] + ": <strong>" + data_item["a_1"] + "</strong>" +
+              "<br>" + data_item["q_2"] + ": <strong>" + data_item["a_2"] + "</strong>" +
+              "<br>" + data_item["q_4"] + ": <strong>" + data_item["a_4"] + "</strong>" +
+              "<br>" + data_item["q_5"] + ": <strong>" + data_item["a_5"] + "</strong>" +
+              "<br>" + data_item["q_6"] + ": <strong>" + data_item["a_6"] + "</strong>" +
+              "<br>" + data_item["q_7"] + ": <strong>" + data_item["a_7"] + "</strong>" +
+              "<br><br><a href=\"" + download_url + "\">Download Dashboard</a>");
           infoWnd.open(mapCanvas, marker);
         }.bind(null, marker, text));
           
