@@ -16,13 +16,21 @@ FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
-def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
-    
+def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
+    OCSA_name, output = xlsGenerate(survey_id, login_name, submission_id) 
+    response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=' + OCSA_name + '.xlsx'
+    return response
+
+def xlsGenerate(survey_id, login_name, submission_id):   
+    """Generates an XLSX file. Returns a tuple (name,data) where the name is the OCSA name and
+    the data is a StringIO object.
+    """    
     output = StringIO.StringIO()
     
     urlAnswers = FHServer + "/api/v1/data/" + login_name + "/" + survey_id
     urlQuestions = FHServer + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
-   
+
     result = requests.get(urlAnswers, headers=headers)
     dataAnswers = json.loads(result.content)
     result = requests.get(urlQuestions, headers=headers)
@@ -40,7 +48,6 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
             answerDict = {}
             answerDict['question'] = data['label']
             questionDict[data['name']] = answerDict     
-
 
     #------------------------------------------
     #------------------------------------------
@@ -363,9 +370,4 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
 
             workbook.close()
             output.seek(0)
-
-            response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=' + OCSA_name + '.xlsx'
-
-            return response
-            
+            return OCSA_name, output
