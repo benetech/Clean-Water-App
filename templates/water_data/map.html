@@ -17,7 +17,7 @@
     <script type="text/javascript">
 
       function filterChanged(value) {
-        document.getElementById("range_label").innerHTML = scores[value];
+        document.getElementById("range_label").innerHTML = 0 + '-' + scores[value];
         for (i in markers) {
           marker = markers[i];
           var li = document.getElementById('marker_'+marker.id);
@@ -105,9 +105,8 @@
       var scores, icons;
       function initialize() {
         // Creates data structures for filtering logic.
-        scores = [0, 30,55,80,100];
+        scores = [30,55,80,100];
         icons = [
-          '',
           'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
           'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
           'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
@@ -137,7 +136,7 @@
     <div id="filter_pane">
       <h3> Filter</h3>
       <input type="range" min="0" max="1" value="1" onchange="filterChanged(this.value)"/>
-      <span id="range_label">100</span>
+      <span id="range_label">0-100</span>
     </div>
 
     <div id="lista">
