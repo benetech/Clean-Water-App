@@ -17,7 +17,7 @@ FHPass = "cleanwaterpass"
 FHServer = "http://54.86.146.199"
 headers = {'Authorization':'Token b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc'}
 
-app = Celery('tasks', broker='redis://localhost')
+app = Celery('viewsPhotos', broker='redis://localhost')
 
 @app.task
 def photosDownload(survey_id, login_name, survey_title, submission_id): 
@@ -172,11 +172,11 @@ def photosStart(request, survey_id, login_name, survey_title, submission_id):
     response_data = {"task_id": task.id}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def photosCheck(request, task_id):
+def photosCheck(request, login_name, task_id):
     results = photosDownload.AsyncResult(task_id)
     response_data = {}
     response_data.ready = results.ready()
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def photosFinish(request, task_id):
+def photosFinish(request, login_name, task_id):
     return photosDownload.AsyncResult(task_id).get()
