@@ -143,6 +143,7 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
             #Close workbook and write to zip file
             workbook.close()
             zipf.writestr(OCSA_name + ' Foto.xlsx', unzippedImages.getvalue())
+            
 
             #Get photo attachement file names and retrieve them via URL, then add to byte stream
             for x in range (1, photoGroupSize+1):
@@ -150,9 +151,14 @@ def photosDownload(request, survey_id, login_name, survey_title, submission_id):
                 questionInput = questionDict.get('photo_question_' + str(x))  
                 if(imageData and imageData['answer'] != 'n/a'):        
                     url = settings.FH_SERVER + '/attachment/original?media_file=' + login_name + '/attachments/' + imageData['answer']
-                    unzippedImages = BytesIO(urlopen(url).read())
-                    unzippedImages.seek(0)
-                    zipf.writestr(questionInput['answer'] + '.jpg', unzippedImages.getvalue())
+                    
+                    try:
+                        urlImage = urlopen(url)             
+                        unzippedImages = BytesIO(urlImage.read())
+                        unzippedImages.seek(0)
+                        zipf.writestr(questionInput['answer'] + '.jpg', unzippedImages.getvalue())
+                    except:
+                        print "error"
 
 
             zipf.close()

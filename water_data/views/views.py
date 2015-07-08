@@ -73,7 +73,8 @@ def listSubmissions(request, survey_id, login_name, survey_title):
     if surveyData:
       for item in surveyData:
         dataDict = {}
-        dataDict['has_photos'] = '_attachments' in item
+        if item['_attachments']:
+            dataDict['has_photos'] = True
         d = datetime.strptime(item['_submission_time'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
         dataDict['epoch_time'] = getEpochTime(d)
         dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M%Z')
