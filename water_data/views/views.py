@@ -50,7 +50,7 @@ def index(request, login_name):
         dataDict['login_name'] = login_name
         surveyDict[item['title']] = dataDict
 
-    context = {'surveys': surveyDict, 'FHServer': settings.FH_SERVER + '/' + login_name}
+    context = {'surveys': surveyDict, 'FHServer': settings.FH_SERVER + '/' + login_name, 'loginName': login_name}
     return render(request, 'water_data/index.html', context)
     #return HttpResponse("hello world", mimetype='application/json')
 

@@ -8,9 +8,10 @@
 <style>
 
 .avina_img {
-	text-align:center;
+	text-align:left;
 	position:absolute;
-	bottom:5px;
+	top:10px;
+	left:20px;
 	width:100%;
 }
 
@@ -24,20 +25,39 @@ table {
 	background-color:#E6EEF5;
 }
 
+h4 {
+	
+	margin-left: 5px;
+}
+
+.line-separator {
+
+height:1px;
+background:#717171;
+border-bottom:1px solid #313030;
+
+}
+
 </style>
 
 <div>
-	<h1><center> Avina Clean Water App Data </center></h1>
+	<h1><center> Avina Clean Water App Data </center></h1>	
 </div>
 
-<br>
+<div class="avina_img"><img src = http://www.avina.net/esp/wp-content/uploads/2013/02/logo_avina.jpg></div>
+
+<br></br>
+
+<div class ="line-separator"></div>
+
+<br></br>
 
 <div>
-	<h3> FormHub server: <a href={{FHServer}} target="_blank">{{ FHServer }} </a></h3>
+	<h4> FormHub server: <a href={{FHServer}} target="_blank">{{ FHServer }} </a></h3>
+	<h4> View submission on map: <a href="/surveydata/{{loginName}}/map" target="_blank">Map</a>
 </div>
 
 <br>
-
 
 <table class ="table table-bordered">
 	<thead>
@@ -66,7 +86,5 @@ table {
 		
 	</tbody>
 </table>
-
-<div class="avina_img"><img src = http://www.avina.net/esp/wp-content/uploads/2013/02/logo_avina.jpg></div>
 
 </html>
