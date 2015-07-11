@@ -85,20 +85,20 @@ TEMPLATE_DIRS = (
 #     'default' = dj_database_url.config()
 # }
 
-DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
+# DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 # DATABASES['default'] =  dj_database_url.config()
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "clean_water",
-#         "USER": "",
-#         "PASSWORD": "",
-#         "HOST": "localhost",
-#         "PORT": "",
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "clean_water",
+        "USER": "",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
