@@ -31,7 +31,7 @@ def index(request, login_name):
     headers = {'Authorization':'Token ' + apiKey}
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
-
+    
     surveyDict = {}
     if surveyData:
       for item in surveyData:
