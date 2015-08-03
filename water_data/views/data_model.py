@@ -19,18 +19,22 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.timezone import utc
 
-    
-def formatData(submission_id, dataQuestions, dataAnswers):
+
+def formatData(submission_id, dataAnswers, dataQuestions):
 
     
     #list of all the groups to be analyzed in dashboard
     groups = ['personalization', 'community', 'administration', 'operation', 'sanitation', 'education_sanitation', 'GIRH', 'GIRS', 'communication']
     questionDict = {}
 
+
     #format: communication_question_1, {question:“question”, answer:“answer”}
     
+    
+    
+    
     #generate questionsDict
-    for x in range (2, 11):
+    for x in range (2, 11):        
         for data in dataQuestions['children'][x]['children']:
             answerDict = {}
             answerDict['question'] = data['label']

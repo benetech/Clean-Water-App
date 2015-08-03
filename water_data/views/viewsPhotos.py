@@ -12,19 +12,15 @@ import StringIO
 import xlsxwriter
 import datetime
 from urllib2 import urlopen
+from server_request import fetchJSON
 
 def photosDownload(request, survey_id, login_name, survey_title, submission_id): 
     
-    urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + '/' + survey_id
-    urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + '/' + survey_id + '/' + 'form.json'
-   
-    apiKey = settings.FH_API_TOKENS[login_name]
-    headers = {'Authorization':'Token ' + apiKey}
+    #fetch json data from formhub, returns a list [dataAnswers, dataQuestions]    
+    jsonData = fetchJSON(login_name, survey_id)
 
-    result = requests.get(urlAnswers, headers=headers)
-    dataAnswers = json.loads(result.content)
-    result = requests.get(urlQuestions, headers=headers)
-    dataQuestions = json.loads(result.content)
+    dataAnswers = jsonData[0]
+    dataQuestions = jsonData[1]
 
     #fill Question dict with questions
     #communication_question_1, {question:“question”, answer:“answer”}

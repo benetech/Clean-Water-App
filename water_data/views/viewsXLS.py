@@ -14,24 +14,18 @@ import datetime
 from urllib2 import urlopen
 
 from data_model import formatData
+from server_request import fetchJSON
 
 #now go through and reformat formatting so that it writes out same XLS file as before
 #then add loop logic
 
 def xlsDownload(request, survey_id, login_name, survey_title, submission_id):   
         
-    urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
-    urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
-   
-    apiKey = settings.FH_API_TOKENS[login_name]
-    headers = {'Authorization':'Token ' + apiKey}
-
-    result = requests.get(urlAnswers, headers=headers)
-    dataAnswers = json.loads(result.content)
-    result = requests.get(urlQuestions, headers=headers)
-    dataQuestions = json.loads(result.content)
-    
-    questionDict = formatData(submission_id, dataQuestions, dataAnswers)
+    #fetch json data from formhub, returns a list [dataAnswers, dataQuestions]    
+    jsonData = fetchJSON(login_name, survey_id)
+        
+    #combine dictionaries and perform calculations in data_model
+    questionDict = formatData(submission_id, jsonData[0], jsonData[1])
     
     output = StringIO.StringIO()
     
