@@ -26,12 +26,17 @@ def index(request, login_name):
     if not login_name in settings.FH_API_TOKENS or not settings.FH_API_TOKENS[login_name]:
         raise Exception('No API Token found for: ' + login_name + ', add it to local_settings.py')
 
-    url = settings.FH_SERVER + "/api/v1/forms/" + login_name
+    #formhub aws
+    #url = settings.FH_SERVER + "/api/v1/forms/" + login_name
+
+    #ona
+    url = settings.FH_SERVER + "/api/v1/forms?owner=" + login_name 
+   
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}
     result = requests.get(url, headers=headers)
     surveyData = json.loads(result.content)
-    
+        
     surveyDict = {}
     if surveyData:
       for item in surveyData:
@@ -49,10 +54,10 @@ def index(request, login_name):
         dataDict['num_of_submissions'] = item['num_of_submissions']
         dataDict['login_name'] = login_name
         surveyDict[item['title']] = dataDict
-
+    
     context = {'surveys': surveyDict, 'FHServer': settings.FH_SERVER + '/' + login_name, 'loginName': login_name}
     return render(request, 'water_data/index.html', context)
-    #return HttpResponse("hello world", mimetype='application/json')
+    # return HttpResponse("hello world", mimetype='application/json')
 
 
 def getEpochTime(dt):
@@ -62,7 +67,14 @@ def getEpochTime(dt):
 
 
 def listSubmissions(request, survey_id, login_name, survey_title):
-    url = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
+    
+    #formhub AWS
+    #url = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
+    
+    #ONA
+    url = settings.FH_SERVER + "/api/v1/data/" + survey_id
+    
+    
     full_url = request.build_absolute_uri(None)
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}
@@ -71,16 +83,17 @@ def listSubmissions(request, survey_id, login_name, survey_title):
 
     surveyDict = {}
     if surveyData:
-      for item in surveyData:
-        dataDict = {}
-        if item['_attachments']:
-            dataDict['has_photos'] = True
-        d = datetime.strptime(item['_submission_time'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
-        dataDict['epoch_time'] = getEpochTime(d)
-        dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M%Z')
-        dataDict['submission_id'] = item['_id']
-        dataDict['ocsa_name'] = item['personalization_group/personalization_question_3']
-        surveyDict[dataDict['submission_id']] = dataDict
+        print surveyData
+        for item in surveyData:
+            dataDict = {}
+            if item['_attachments']:
+                dataDict['has_photos'] = True
+            d = datetime.strptime(item['_submission_time'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
+            dataDict['epoch_time'] = getEpochTime(d)
+            dataDict['submission_time'] = d.strftime('%b %d, %Y %H:%M%Z')
+            dataDict['submission_id'] = item['_id']
+            dataDict['ocsa_name'] = item['personalization_group/personalization_question_3']
+            surveyDict[dataDict['submission_id']] = dataDict
 
     sortedSurveyDict = OrderedDict(sorted(surveyDict.items(), key=lambda t: t[1]['epoch_time'], reverse=True))
     context = {'surveys': sortedSurveyDict, 'title': survey_title, 'url' : full_url}

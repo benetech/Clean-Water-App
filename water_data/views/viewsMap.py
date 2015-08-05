@@ -15,10 +15,81 @@ import datetime
 import random
 from urllib2 import urlopen
 
+from server_request import fetchJSON
+from data_model import formatData
+from data_model import formatDataBatch
+
 # Index displays the data on the first page
+def mapMarkersOna(request, login_name):
+    
+    #need to get list of all forms, then request all data for each form
+    #loop through submission_ids and store returned dictionaries
+    #pass necessary information to map
+    
+    url = settings.FH_SERVER + "/api/v1/forms?owner=" + login_name 
+   
+    apiKey = settings.FH_API_TOKENS[login_name]
+    headers = {'Authorization':'Token ' + apiKey}
+    result = requests.get(url, headers=headers)
+    surveyData = json.loads(result.content)
+    
+    #batch will get all submissions for 1 form, not for all forms, that's so it can be re-used with the zip process
+    #so, need to loop through all forms, and automatically get list of submissions
+    
+    questionDictTotal = {}
+    
+    
+    #retrieve all questionDict for all forms
+    if surveyData:
+        #dataResult = [dataAnswers, dataQuestions]
+        #iterate through all forms
+        for x in range(0, len(surveyData)):
+            #get formid to identify form
+            formID = str(surveyData[x]['formid'])
+            #request json data for that form
+            #print "survey_id: " + survey_id
+            
+            jsonData = fetchJSON(login_name, formID)
+            
+            #return list of dictionaries of that form
+            questionDictList = formatDataBatch(jsonData[0], jsonData[1])
+            
+            # questionDict['submission_id'] = submissionID
+            # questionDict['latlng'] = geolocation
+            # questionDict['form_name'] = formName
+            
+            
+            #iterate through all questionDict
+            for questionDict in questionDictList:
+                questionDict['formid'] = formID
+                print questionDict
+                print " "
+                questionDictTotal[questionDict['submission_id']] = questionDict
+
+                
+        #print "total dict list length: " + str(len(questionDictListTotal))
+              
+    # for key,value in questionDictTotal.iteritems():
+    #       print key
+    #       print questionDictTotal[key]  
+          
+    js_data = simplejson.dumps(questionDictTotal)                 
+    context = {'surveysJs': js_data, 'geoDictionary': questionDictTotal}    
+    return render(request, 'water_data/map.html', context)
+                
+                            
+                
+    return HttpResponse("hello world", mimetype='application/json')
+
+
+
 def mapMarkers(request, login_name):
     
-    url = settings.FH_SERVER + "/api/v1/forms/" + login_name
+    #formhub AWS
+    #url = settings.FH_SERVER + "/api/v1/forms/" + login_name
+    
+    #ONA
+    url = settings.FH_SERVER + "/api/v1/forms?owner=" + login_name 
    
     apiKey = settings.FH_API_TOKENS[login_name]
     headers = {'Authorization':'Token ' + apiKey}
@@ -32,10 +103,19 @@ def mapMarkers(request, login_name):
     if surveyData:
         for x in range(0, len(surveyData)):
             survey_id = str(surveyData[x]['formid'])
-            urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
+            
+            
+            # urlAnswers = settings.FH_SERVER + "/api/v1/data/" + login_name + "/" + survey_id
+
+            #ONA
+            urlAnswers = settings.FH_SERVER + "/api/v1/data/" + survey_id
 
             if not questions.get(survey_id):
-                urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+                #urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + login_name + "/" + survey_id + "/" + "form.json"
+                
+                #ONA
+                urlQuestions = settings.FH_SERVER + "/api/v1/forms/" + survey_id + "/" + "form.json"
+                
                 result = requests.get(urlQuestions, headers=headers)
                 dataQuestions = json.loads(result.content)
                 questions[survey_id] = dataQuestions
@@ -69,9 +149,9 @@ def mapMarkers(request, login_name):
                 personalDict['formName'] = surveyDataAnswers[y]['_xform_id_string']
                 geoDict[surveyDataAnswers[y]['_id']] = personalDict
                 
-        # for key,value in geoDict.iteritems():
-        #     print key
-        #     print geoDict[key]
+        for key,value in geoDict.iteritems():
+              print key
+              print geoDict[key]
     
     js_data = simplejson.dumps(geoDict)                 
     context = {'surveysJs': js_data, 'geoDictionary': geoDict}    
