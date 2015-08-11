@@ -12,8 +12,10 @@ http://www.sparklewise.com/django-settings-for-production-and-development-best-p
 
 # Map from FormHub login names to corresponding API Tokens.
 FH_API_TOKENS = {
+    #formhub
     # "cleanwater": "b4bbcc2be57b4ed1ed5ffbb4e71bafd85227a6dc",
-    "cleanwater": "0a02e9ea659a6168629ff0b46b812c44a31e56cb",
+    #Ona
+    "docsas": "9765214e71cb4d58dbf21519f2a0cc404de00fc8",
 
 }
 
