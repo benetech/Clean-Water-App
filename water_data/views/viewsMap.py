@@ -47,42 +47,24 @@ def mapMarkersOna(request, login_name):
             #get formid to identify form
             formID = str(surveyData[x]['formid'])
             #request json data for that form
-            #print "survey_id: " + survey_id
-            
             jsonData = fetchJSON(login_name, formID)
             
             #return list of dictionaries of that form
             questionDictList = formatDataBatch(jsonData[0], jsonData[1])
             
-            # questionDict['submission_id'] = submissionID
-            # questionDict['latlng'] = geolocation
-            # questionDict['form_name'] = formName
-            
-            
-            #iterate through all questionDict
+            #iterate through all questionDict to create questionDictTotal
             for questionDict in questionDictList:
                 questionDict['formid'] = formID
-                print questionDict
-                print " "
-                questionDictTotal[questionDict['submission_id']] = questionDict
-
                 
-        #print "total dict list length: " + str(len(questionDictListTotal))
-              
-    # for key,value in questionDictTotal.iteritems():
-    #       print key
-    #       print questionDictTotal[key]  
+                #print int(questionDict['total_average']*100)
+                questionDict['total_average'] = int(questionDict['total_average']*100)
+                questionDict['score'] = random.randint(0,100)
+                questionDictTotal[questionDict['submission_id']] = questionDict
           
     js_data = simplejson.dumps(questionDictTotal)                 
     context = {'surveysJs': js_data, 'geoDictionary': questionDictTotal}    
     return render(request, 'water_data/map.html', context)
                 
-                            
-                
-    return HttpResponse("hello world", mimetype='application/json')
-
-
-
 def mapMarkers(request, login_name):
     
     #formhub AWS
@@ -149,9 +131,9 @@ def mapMarkers(request, login_name):
                 personalDict['formName'] = surveyDataAnswers[y]['_xform_id_string']
                 geoDict[surveyDataAnswers[y]['_id']] = personalDict
                 
-        for key,value in geoDict.iteritems():
-              print key
-              print geoDict[key]
+        # for key,value in geoDict.iteritems():
+        #       print key
+        #       print geoDict[key]
     
     js_data = simplejson.dumps(geoDict)                 
     context = {'surveysJs': js_data, 'geoDictionary': geoDict}    
