@@ -11,3 +11,7 @@ venv/
 
 # .swp files
 *.swp
+
+#local settings file
+avina_app/local_settings.py
+

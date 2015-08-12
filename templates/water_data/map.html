@@ -55,9 +55,7 @@
         bounds.extend(latlng);
         var download_url = "/surveydata/docsas/" + data_item["formid"] + "/" + data_item["form_name"] + "/xlsDownload/" + id;
 				var text = data_item['personalization_question_3']['answer']
-        //var score = parseInt(data_item["total_average"]*100);
 				var score = data_item['total_average'];
-				//var score = 90;
           
         // Creates a marker.
         var marker = new google.maps.Marker({

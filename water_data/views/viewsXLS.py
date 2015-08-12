@@ -90,7 +90,7 @@ def xlsDownload(request, survey_id, login_name, survey_title, submission_id):
                 outputQuestion = questionDict.get(groups[groupNum] + '_question_' + str(x))
                 if(outputQuestion):
                     worksheetData.write(row, col, outputQuestion.get('question').split(' ')[0], formatWhite)
-                    worksheetData.write(row, col + 1, outputQuestion.get('question'), formatWhite)
+                    worksheetData.write(row, col + 1, outputQuestion.get('question').split(' ', 1)[1], formatWhite)
                     worksheetData.merge_range('C' + str(row + 1) + ':D' + str(row + 1),outputQuestion.get('answer'), formatWhite)
                     row += 1
 
